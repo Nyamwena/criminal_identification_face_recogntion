@@ -42,6 +42,9 @@ from infobip_api_client.model.sms_response import SmsResponse
 from infobip_api_client.model.sms_textual_message import SmsTextualMessage
 from infobip_api_client.api.send_sms_api import SendSmsApi
 from infobip_api_client.exceptions import ApiException
+
+#get user location
+from geopy.geocoders import Nominatim
 import math
 
 mpl.use('Agg')
@@ -150,6 +153,8 @@ def create_dataset(username):
 	# destroying all the windows
 	cv2.destroyAllWindows()
 
+def get_user_location():
+	print('location')
 def send_sms( alias_name):
 	BASE_URL = "https://yrjgmg.api.infobip.com"
 	API_KEY = "9aca25f6189d649cca2c9cf6e9a62e24-8c8e4071-6a1c-422f-bee1-27abd015c392"
