@@ -9,6 +9,8 @@
     <!-- plugins:css -->
     <link rel="stylesheet" href="{% static 'recognition/assets/vendors/mdi/css/materialdesignicons.min.css' %}">
     <link rel="stylesheet" href="{% static 'recognition/assets/vendors/css/vendor.bundle.base.css' %}">
+       <link rel="stylesheet" href="{% static 'recognition/assets/vendors/select2/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'recognition/assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css' %}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <!-- End Plugin css for this page -->
@@ -16,6 +18,7 @@
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="{% static 'recognition/assets/css/style.css' %}">
+      <link rel="stylesheet" href="{% static 'recognition/assets/css/jquery.dataTables.min.css' %}">
     <!-- End layout styles -->
 
   </head>
@@ -87,8 +90,10 @@
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="">Register Criminal</a></li>
+
                 <li class="nav-item"> <a class="nav-link" href="{% url 'add-photos' %}">Add Photo</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'criminals_list' %}">Criminal Profile</a></li>
+
               </ul>
             </div>
           </li>
@@ -101,7 +106,7 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{% url 'reports' %}">
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
@@ -111,23 +116,16 @@
     
        </ul>
       </nav>
-
       <div class="container-fluid page-body-wrapper">
-
         <nav class="navbar p-0 fixed-top d-flex flex-row">
-        
           <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-           
-        
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item nav-settings d-none d-lg-block">
                 <a class="nav-link" href="#">
                   <i class="mdi mdi-view-grid"></i>
                 </a>
               </li>
-         
               <li class="nav-item dropdown">
-              
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                 <a href="{% url 'logout' %}">
                     <div class="preview-item-content">
@@ -145,21 +143,16 @@
         <!-- partial -->
         <div class="main-panel" style="background-image: url('{% static 'recognition/img/facial_recog.png' %}')">
           <div class="content-wrapper">
-
             {% block content %}
- 
-           
- 
             {% endblock %}
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:../../partials/_footer.html -->
           <footer class="footer">
             <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">
-                Project Made by: M205179
+              <span class="d-block text-center text-sm-left d-sm-inline-block" style="color: #FFFFFF">
+                Project Members: M205179 | M205618 | M205409 | M188074
               </span>
-              
             </div>
           </footer>
           <!-- partial -->
@@ -182,6 +175,9 @@
     {%endif%}
 
     </script>
+    {% block myscripts %}
+    {% endblock %}
+    <script src="{% static '/recognition/assets/js/jquery.dataTables.min.js' %}"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <!-- End plugin js for this page -->
@@ -191,6 +187,8 @@
     <script src="{% static '/js/misc.js' %}"></script>
     <script src="{% static '/js/settings.js' %}"></script>
     <script src="{% static '/js/todolist.js' %}"></script>
+    <script src="{% static '/recognition/assets/vendors/select2/select2.min.js' %}"></script>
+    <script src="{% static '/recognition/assets/js/select2.js' %}"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
     <!-- End custom js for this page -->

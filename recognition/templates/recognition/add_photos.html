@@ -6,13 +6,20 @@
  <div class="col-md-6 grid-margin stretch-card">
      <div class="card">
          <div class="card-body">
-
-             <p class="card-description"> Enter Criminal Alias Name </p>
              <form method="POST" >
              {% csrf_token %}
-             {{form| crispy}}
+            <div class="form-group">
+                      <label>Criminal Alias Name </label>
+                      <select class="js-example-basic-single" style="width:100%" name="alias_name">
+                          {% for criminal_name in criminal_names %}
+                        <option value="{{ criminal_name.alias_name }}">{{ criminal_name.alias_name }}</option>
+                          {% endfor %}
+                      </select>
+                    </div>
+                 <br>
+                 <hr>
                  <div class="form-group">
-                     <button class="btn btn-outline-info" type="submit"> Submit</button>
+                     <button class="btn btn-primary btn-block" type="submit"> Submit to create photo dataset</button>
                  </div>
              </form>
          </div>

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+     <div class="row">
+              <div class="col-sm-4 grid-margin">
+                  <a href="{% url 'wanted_criminals' %}">
+                      <div class="card">
+                  <div class="card-body">
+                    <h5 style="color: #fff">WANTED CRIMINALS</h5>
+                    <div class="row">
+                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">Reports of criminals who are on wanted list</h2>
+                        </div>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-search-web text-primary ml-auto"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  </a>
+
+              </div>
+              <div class="col-sm-4 grid-margin">
+                  <a href="{% url 'captured_criminals' %}">
+                      <div class="card">
+                  <div class="card-body">
+                    <h5 style="color: #fff">CAPTURED CRIMINALS</h5>
+
+                          <div class="row">
+                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">Reports of criminals who have been captured</h2>
+                        </div>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-security text-danger ml-auto"></i>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                  </a>
+
+              </div>
+                <div class="col-sm-4 grid-margin">
+                  <a href="{% url 'deseased_criminals' %}">
+                      <div class="card">
+                  <div class="card-body">
+                    <h5 style="color: #fff">DECEASED CRIMINALS</h5>
+
+                          <div class="row">
+                       <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">Reports of criminals who are deceased</h2>
+                        </div>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-coffin text-danger ml-auto"></i>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                  </a>
+
+              </div>
+
+                <div class="col-sm-4 grid-margin">
+                  <a href="{% url 'cctv_logs' %}">
+                      <div class="card">
+                  <div class="card-body">
+                    <h5 style="color: #fff">CCTV LOGS</h5>
+
+                          <div class="row">
+                       <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">Get report of cctv logs</h2>
+                        </div>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-cctv text-danger ml-auto"></i>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                  </a>
+
+              </div>
+            </div>
+
+{% endblock %}

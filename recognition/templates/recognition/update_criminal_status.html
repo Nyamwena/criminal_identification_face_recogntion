@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+ <div class="col-md-6 grid-margin stretch-card">
+     <div class="card">
+         <div class="card-body">
+
+             <p class="card-description">  </p>
+             <form method="POST" action="/update_criminal_record/{{criminal.id }}/" >
+             {% csrf_token %}
+                  <div class="form-group">
+                        <input type="text"  value="{{ criminal.alias_name }}"   readonly>
+                      </div>
+                  <div class="form-group">
+                      <label>Select Status</label>
+                      <select class="js-example-basic-single" style="width:100%" name="status">
+                        <option value="WANTED">WANTED</option>
+                        <option value="FOUND">FOUND</option>
+                          <option value="DECEASED">DECEASED</option>
+                      </select>
+                    </div>
+                 <div class="form-group">
+                     <button class="btn btn-outline-info" type="submit"> Update Status</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+ </div>
+
+{% endblock %}

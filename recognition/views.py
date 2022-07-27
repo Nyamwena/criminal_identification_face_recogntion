@@ -1,4 +1,7 @@
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render,redirect
+from django.urls import reverse
+
 from .forms import usernameForm,DateForm,UsernameAndDateForm, DateForm_2
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -33,7 +36,7 @@ from django.db.models import Count
 import matplotlib.pyplot as plt
 from pandas.plotting import register_matplotlib_converters
 from matplotlib import rcParams
-from .models import Criminal_Profile
+from .models import Criminal_Profile, CriminalLog  # CriminalLog
 #infobip sms api
 from infobip_api_client.api_client import ApiClient, Configuration
 from infobip_api_client.model.sms_advanced_textual_request import SmsAdvancedTextualRequest
@@ -42,7 +45,7 @@ from infobip_api_client.model.sms_response import SmsResponse
 from infobip_api_client.model.sms_textual_message import SmsTextualMessage
 from infobip_api_client.api.send_sms_api import SendSmsApi
 from infobip_api_client.exceptions import ApiException
-
+import xlwt
 #get user location
 from geopy.geocoders import Nominatim
 import math
@@ -98,9 +101,6 @@ def create_dataset(username):
 		#Takes in image and some other parameter for accurate result
 		faces = detector(gray_frame,0)
 		#In above 'faces' variable there can be multiple faces so we have to get each and every face and draw a rectangle around it.
-		
-		
-			
 
 
 		for face in faces:
@@ -118,10 +118,6 @@ def create_dataset(username):
 			if face is None:
 				print("face is none")
 				continue
-
-
-			
-
 			cv2.imwrite(directory+'/'+str(sampleNum)+'.jpg'	, face_aligned)
 			face_aligned = imutils.resize(face_aligned ,width = 400)
 			#cv2.imshow("Image Captured",face_aligned)
@@ -157,11 +153,10 @@ def get_user_location():
 	print('location')
 def send_sms( alias_name):
 	BASE_URL = "https://yrjgmg.api.infobip.com"
-	API_KEY = "9aca25f6189d649cca2c9cf6e9a62e24-8c8e4071-6a1c-422f-bee1-27abd015c392"
-
-	SENDER = "FaceWatch"
-	RECIPIENT = "263778357253"
-	MESSAGE_TEXT = alias_name + " Has been detected at Ok Mart Supermarket"
+	API_KEY = "0b20aa5e686a13ec7fa35c0c8773d2e4-11a2ac67-cf7c-40d1-a9f2-c742f6b9d606"
+	SENDER = "Samaritan"
+	RECIPIENT = "263772992402"
+	MESSAGE_TEXT = alias_name + " Has been spotted at Mucheke"
 
 	client_config = Configuration(
 		host=BASE_URL,
@@ -195,8 +190,7 @@ def send_sms( alias_name):
 		print(ex)
 	# print('sms sent')
 
-def update_criminal_found():
-	print('criminal found')
+
 
 
 def predict(face_aligned,svc,threshold=0.7):
@@ -234,37 +228,111 @@ def vizualize_Data(embedded, targets,):
 	plt.close()
 
 
-
-
-			
-		
-
-
-
-#function to check
-# def update_attendance_in_db_out(present):
-# 	today=datetime.date.today()
-# 	time=datetime.datetime.now()
-# 	for person in present:
-# 		user=User.objects.get(username=person)
-# 		if present[person]==True:
-# 			a=Time(user=user,date=today,time=time, out=True)
-# 			a.save()
-#
-
-
-
-
-
-
-		
-
-
 # Create your views here.
 @login_required
 def home(request):
 	return render(request, 'recognition/home.html')
 
+@login_required
+def view_criminal_profile(request, pk):
+	criminal = Criminal_Profile.objects.get(alias_name=pk)
+	context = {'criminal': criminal}
+	return render(request, 'recognition/criminal_profile.html', context)
+
+@login_required
+def wanted_criminals_report(request):
+	criminals = Criminal_Profile.objects.filter(status='WANTED')
+	context = {'criminals': criminals}
+	return render(request, 'recognition/wanted_criminals_report.html', context)
+
+@login_required
+def captured_criminals_report(request):
+	criminals = Criminal_Profile.objects.filter(status="FOUND")
+	context = {'criminals': criminals}
+	return render(request, 'recognition/captured_criminals_report.html', context)
+@login_required
+def deceased_criminals_report(request):
+	criminals = Criminal_Profile.objects.filter(status="DECEASED")
+	context = {'criminals': criminals}
+	return render(request, 'recognition/deceased_criminals_report.html', context)
+@login_required
+def update_criminal(request, pk):
+	criminal = Criminal_Profile.objects.get(id=pk)
+	context = {'criminal': criminal}
+	return render(request, 'recognition/update_criminal_status.html', context)
+
+@login_required
+def criminals_report(request):
+	return render(request, 'recognition/reports.html')
+
+@login_required
+def update_criminal_record(request, pk):
+  status = request.POST['status']
+  criminal = Criminal_Profile.objects.get(id=pk)
+  criminal.status = status
+  criminal.save()
+  messages.success(request, f'Updated Successfully')
+  return HttpResponseRedirect(reverse('criminals_list'))
+
+
+def export_to_excel(request):
+	responce = HttpResponse(content_type='application/ms-excel')
+	responce['Content-Disposition'] = 'attachment; filename=WantedCriminals' + \
+			str(datetime.datetime.now())+'.xls'
+	wb =xlwt.Workbook(encoding='utf-8')
+	ws = wb.add_sheet('Wanted_Criminals')
+	row_num = 0
+
+	font_style = xlwt.XFStyle()
+	font_style.font.bold = True
+
+	columns = ['FirstName','LastName', 'Crimes']
+
+	for col_nums in range(len(columns)):
+		ws.write(row_num, col_nums, columns[col_nums], font_style)
+
+	font_style = xlwt.XFStyle()
+	rows = Criminal_Profile.objects.filter(status='WANTED').values_list('firstname', 'lastname', 'crimes_comitted')
+
+	for row in rows:
+		row_num += 1
+
+		for col_nums in range(len(row)):
+			ws.write(row_num, col_nums, str(row[col_nums]), font_style)
+
+	wb.save(responce)
+
+	return  responce
+
+
+
+def face_recog_logs( alias_names):
+	today = datetime.date.today()
+	time = datetime.datetime.now()
+	for alias_name in alias_names:
+		user = Criminal_Profile.objects.get(alias_name=alias_name)
+		try:
+			qs = CriminalLog.objects.get(alias_name=user, date=time)
+		except:
+			qs = None
+
+		if qs is None:
+			if alias_names[alias_name] == True:
+				a = CriminalLog(criminal_profile_link=user, date=time)
+				a.save()
+
+
+@login_required
+def criminals_list(request):
+	criminals = Criminal_Profile.objects.all()
+	context = {'criminals': criminals}
+	return render(request, 'recognition/criminals_list.html', context)
+
+@login_required
+def cctv_logs(request):
+	criminals = CriminalLog.objects.all()
+	context = {'criminals': criminals}
+	return render(request, 'recognition/cctv_logs_report.html', context)
 @login_required
 def dashboard(request):
 	if(request.user.username=='admin'):
@@ -282,7 +350,8 @@ def add_photos(request):
 	if request.method=='POST':
 		form=usernameForm(request.POST)
 		data = request.POST.copy()
-		username=data.get('username')
+		# username=data.get('username')
+		username = request.POST['alias_name']
 		if username_present(username):
 			create_dataset(username)
 			messages.success(request, f'Dataset Created')
@@ -292,17 +361,14 @@ def add_photos(request):
 			return redirect('dashboard')
 	else:
 
-			form=usernameForm()
-			return render(request, 'recognition/add_photos.html', {'form' : form})
+			#form=usernameForm()
+			criminal_names = Criminal_Profile.objects.all()
+			context = {'criminal_names': criminal_names}
+			return render(request, 'recognition/add_photos.html', context)
 
 def recognise_the_face(request):
-	
-	
-
-	
 	#global person_name
 	detector = dlib.get_frontal_face_detector()
-	
 	predictor = dlib.shape_predictor('face_recognition_data/shape_predictor_68_face_landmarks.dat')   #Add path to the shape predictor ######CHANGE TO RELATIVE PATH LATER
 	svc_save_path="face_recognition_data/svc.sav"
 	with open(svc_save_path, 'rb') as f:
@@ -335,22 +401,13 @@ def recognise_the_face(request):
 		gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		
 		faces = detector(gray_frame,0)
-		
-		
-
-
 		for face in faces:
 			print("INFO : inside for loop")
 			(x,y,w,h) = face_utils.rect_to_bb(face)
 
 			face_aligned = fa.align(frame,gray_frame,face)
 			cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),1)
-					
-			
 			(pred,prob)=predict(face_aligned,svc)
-			
-
-			
 			if(pred!=[-1]):
 				
 				person_name=encoder.inverse_transform(np.ravel([pred]))[0]
@@ -369,6 +426,8 @@ def recognise_the_face(request):
 					print(pred, present[pred], count[pred])
 				cv2.putText(frame, str(person_name)+ str(prob), (x+6,y+h-6), cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,255,0),1)
 				send_sms(person_name)
+				face_recog_logs(present)
+
 
 			else:
 				person_name="unknown person"
@@ -397,9 +456,8 @@ def recognise_the_face(request):
 
 	# destroying all the windows
 	cv2.destroyAllWindows()
-
-#	update_attendance_in_db_in(present)
 	#here i will send an sms to local authorities if a face is detected then update the database
+	#face_recog_logs(present)
 	return redirect('home')
 
 
